@@ -4,17 +4,17 @@ class API:
     def __init__(self):
         self.link = "https://jsonplaceholder.typicode.com"
 
-    def get_data(self, id: int):
-        req = requests.get(f'{self.link}/posts/{id}')
-        if req.status_code == 404:
-            print(f"Post not found: {req.status_code}")
-        elif req.status_code == 500:
-            print(f"Internal server error: {req.status_code}")
-        elif req.status_code == 200:
-            print(f"Ok: {req.status_code}")
-            print(req.text)
+    def get_data(self, post_id: int):
+        res = requests.get(f'{self.link}/posts/{post_id}')
+        if res.status_code == 404:
+            print(f"Post not found: {res.status_code}")
+        elif res.status_code == 500:
+            print(f"Internal server error: {res.status_code}")
+        elif res.status_code == 200:
+            print(f"Ok: {res.status_code}")
+            print(res.text)
         else:
-            print(f"Unexpected error: {req.status_code}")
+            print(f"Unexpected error: {res.status_code}")
 
 
     def create_data(self, title: str, body: str):
@@ -24,36 +24,39 @@ class API:
         print(req.text)
 
 
-    def update_data(self, id: int, data: dict):
-        req = requests.put(f'{self.link}/posts/{id}', data=data)
+    def update_data(self, post_id: int, data: dict):
+        res = requests.put(f'{self.link}/posts/{post_id}', data=data)
 
-        if req.status_code == 500:
-            print(f"Internal server error: {req.status_code}")
-        elif req.status_code == 200:
-            print(f"Ok: {req.status_code}")
-            print(req.text)
+        if res.status_code == 500:
+            print(f"Internal server error: {res.status_code}")
+        elif res.status_code == 200:
+            print(f"Ok: {res.status_code}")
+            print(res.text)
         else:
-            print(f"Unexpected error: {req.status_code}")
+            print(f"Unexpected error: {res.status_code}")
 
 
-    def delete_data(self, id: int):
-        req = requests.delete(f'{self.link}/posts/{id}')
-        print(f"Ok: {req.status_code}")
+    def delete_data(self, post_id: int):
+        res = requests.delete(f'{self.link}/posts/{post_id}')
+        print(f"Ok: {res.status_code}")
+
+def get_int(statement):
+    while True:
+        try:
+            return int(input(statement))
+        except ValueError:
+            print("Please enter a number")
 
 if  __name__ == "__main__":
     api = API()
     while True:
-        try:
-            event = int(input("""Choose an action:
-            1: Create
-            2: Delete
-            3: Update
-            4: Get
-            5: Exit
-    """))
-        except ValueError:
-            print("Please enter a number")
-            continue
+        event = get_int("""Choose an action:
+        1: Create
+        2: Delete
+        3: Update
+        4: Get
+        5: Exit
+""")
 
         match event:
             case 1:
@@ -61,17 +64,17 @@ if  __name__ == "__main__":
                 body = input("Enter body: ")
                 api.create_data(title, body)
             case 2:
-                id = input("Enter id: ")
-                api.delete_data(id)
+                post_id = get_int("Enter id: ")
+                api.delete_data(post_id)
             case 3:
-                id = input("Enter id: ")
+                post_id = get_int("Enter id: ")
                 title = input("Enter new title: ")
                 body = input("Enter new body: ")
                 data = {"title": title, "body": body}
-                api.update_data(id, data)
+                api.update_data(post_id, data)
             case 4:
-                id = input("Enter id: ")
-                api.get_data(id)
+                post_id = get_int("Enter id: ")
+                api.get_data(post_id)
             case 5:
                 break
             case _:
